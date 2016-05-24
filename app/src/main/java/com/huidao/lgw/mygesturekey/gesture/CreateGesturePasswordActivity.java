@@ -2,8 +2,10 @@ package com.huidao.lgw.mygesturekey.gesture;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -12,6 +14,8 @@ import com.huidao.lgw.mygesturekey.MyApplication;
 import com.huidao.lgw.mygesturekey.R;
 import com.huidao.lgw.mygesturekey.view.LockPatternUtils;
 import com.huidao.lgw.mygesturekey.view.LockPatternView;
+import com.huidao.lgw.mygesturekey.view.LockPatternView.Cell;
+import com.huidao.lgw.mygesturekey.view.LockPatternView.DisplayMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +25,7 @@ import java.util.List;
  */
 
 public class CreateGesturePasswordActivity extends BaseActivity implements
-        View.OnClickListener {
+        OnClickListener {
 
     private static final int ID_EMPTY_MESSAGE = -1;
     private static final String KEY_UI_STAGE = "uiStage";
@@ -30,7 +34,7 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
     private Button mFooterRightButton;
     private Button mFooterLeftButton;
     protected TextView mHeaderText;
-    protected List<LockPatternView.Cell> mChosenPattern = null;
+    protected List<Cell> mChosenPattern = null;
     private Stage mUiStage = Stage.Introduction;
     private View mPreviewViews[][] = new View[3][3];
 
@@ -38,7 +42,7 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
     /**
      * The patten used during the help screen to show how to draw a pattern.
      */
-    private final List<LockPatternView.Cell> mAnimatePattern = new ArrayList<LockPatternView.Cell>();
+    private final List<Cell> mAnimatePattern = new ArrayList<>();
 
     public Runnable getmClearPatternRunnable() {
         return mClearPatternRunnable;
@@ -47,6 +51,7 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
     public void setmClearPatternRunnable(Runnable mClearPatternRunnable) {
         this.mClearPatternRunnable = mClearPatternRunnable;
     }
+
 
     /**
      * The states of the left footer button.
@@ -160,21 +165,21 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
 
         app=(MyApplication) getApplication();
         // 初始化演示动画
-        mAnimatePattern.add(LockPatternView.Cell.of(0, 0));
-        mAnimatePattern.add(LockPatternView.Cell.of(0, 1));
-        mAnimatePattern.add(LockPatternView.Cell.of(1, 1));
-        mAnimatePattern.add(LockPatternView.Cell.of(2, 1));
-        mAnimatePattern.add(LockPatternView.Cell.of(2, 2));
+        mAnimatePattern.add(Cell.of(0, 0));
+        mAnimatePattern.add(Cell.of(0, 1));
+        mAnimatePattern.add(Cell.of(1, 1));
+        mAnimatePattern.add(Cell.of(2, 1));
+        mAnimatePattern.add(Cell.of(2, 2));
 
-        mLockPatternView = (LockPatternView) this
-                .findViewById(R.id.gesturepwd_create_lockview);
+        mLockPatternView = (LockPatternView)
+                findViewById(R.id.gesturepwd_create_lockview);
         mHeaderText = (TextView) findViewById(R.id.gesturepwd_create_text);
 
         mLockPatternView.setOnPatternListener(mChooseNewLockPatternListener);
         mLockPatternView.setTactileFeedbackEnabled(true);
 
-        mFooterRightButton = (Button) this.findViewById(R.id.right_btn);
-        mFooterLeftButton = (Button) this.findViewById(R.id.reset_btn);
+        mFooterRightButton = (Button) findViewById(R.id.right_btn);
+        mFooterLeftButton = (Button) findViewById(R.id.reset_btn);
         mFooterRightButton.setOnClickListener(this);
         mFooterLeftButton.setOnClickListener(this);
         initPreviewViews();
@@ -213,11 +218,11 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
     private void updatePreviewViews() {
         if (mChosenPattern == null)
             return;
-//        Log.i("way", "result = " + mChosenPattern.toString());
+        Log.i("way", "result = " + mChosenPattern.toString());
         String result=mChosenPattern.toString();
-        for (LockPatternView.Cell cell : mChosenPattern) {
-//            Log.i("way", "cell.getRow() = " + cell.getRow()
-//                    + ", cell.getColumn() = " + cell.getColumn());
+        for (Cell cell : mChosenPattern) {
+            Log.i("way", "cell.getRow() = " + cell.getRow()
+                    + ", cell.getColumn() = " + cell.getColumn());
             mPreviewViews[cell.getRow()][cell.getColumn()]
                     .setBackgroundResource(R.mipmap.gesture_create_grid_selected);
 
@@ -266,7 +271,7 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
                                         + "stage is " + mUiStage);
                     }
                     mLockPatternView.clearPattern();
-                    mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Correct);
+                    mLockPatternView.setDisplayMode(DisplayMode.Correct);
                     updateStage(Stage.Introduction);
                 }
                 break;
@@ -328,7 +333,7 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
 
 
 
-
+//OnPatternListener
     protected LockPatternView.OnPatternListener mChooseNewLockPatternListener = new LockPatternView.OnPatternListener() {
 
         @Override
@@ -339,7 +344,7 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
         }
 
         @Override
-        public void onPatternDetected(List<LockPatternView.Cell> pattern) {
+        public void onPatternDetected(List<Cell> pattern) {
             // TODO Auto-generated method stub
             if (pattern == null)
                 return;
@@ -359,7 +364,7 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
                 if (pattern.size() < LockPatternUtils.MIN_LOCK_PATTERN_SIZE) {
                     updateStage(Stage.ChoiceTooShort);
                 } else {
-                    mChosenPattern = new ArrayList<LockPatternView.Cell>(
+                    mChosenPattern = new ArrayList<>(
                             pattern);
                     updateStage(Stage.FirstChoiceValid);
                 }
@@ -384,7 +389,7 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
         }
 
         @Override
-        public void onPatternCellAdded(List<LockPatternView.Cell> pattern) {
+        public void onPatternCellAdded(List<Cell> pattern) {
             // TODO Auto-generated method stub
 
         }
@@ -419,17 +424,17 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
             mLockPatternView.disableInput();
         }
 
-        mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Correct);
+        mLockPatternView.setDisplayMode(DisplayMode.Correct);
 
         switch (mUiStage) {
             case Introduction:
                 mLockPatternView.clearPattern();
                 break;
             case HelpScreen:
-                mLockPatternView.setPattern(LockPatternView.DisplayMode.Animate, mAnimatePattern);
+                mLockPatternView.setPattern(DisplayMode.Animate, mAnimatePattern);
                 break;
             case ChoiceTooShort:
-                mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);
+                mLockPatternView.setDisplayMode(DisplayMode.Wrong);
                 postClearPatternRunnable();
                 break;
             case FirstChoiceValid:
@@ -439,7 +444,7 @@ public class CreateGesturePasswordActivity extends BaseActivity implements
                 updatePreviewViews();
                 break;
             case ConfirmWrong:
-                mLockPatternView.setDisplayMode(LockPatternView.DisplayMode.Wrong);
+                mLockPatternView.setDisplayMode(DisplayMode.Wrong);
                 postClearPatternRunnable();
                 break;
             case ChoiceConfirmed:

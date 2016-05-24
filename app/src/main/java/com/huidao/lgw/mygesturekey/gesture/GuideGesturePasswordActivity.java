@@ -9,18 +9,20 @@ import android.widget.RelativeLayout;
 
 import com.huidao.lgw.mygesturekey.MyApplication;
 import com.huidao.lgw.mygesturekey.R;
-import com.huidao.lgw.mygesturekey.ViewInject;
+
+import com.lidroid.xutils.view.annotation.ViewInject;
 import com.lidroid.xutils.ViewUtils;
 
 public class GuideGesturePasswordActivity extends AppCompatActivity {
 //    @ViewInject(R.id.rootView_guide)
-    private RelativeLayout rootView_guide;
+
+
 
     @ViewInject(R.id.gesturepwd_guide_btn)
     private Button btn_gesturepwd_guide;    //gesturepwd_guide_btn;
 
     private MyApplication app;
-
+    private RelativeLayout rootView_guide;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
