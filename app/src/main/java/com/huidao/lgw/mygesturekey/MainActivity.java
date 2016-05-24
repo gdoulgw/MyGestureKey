@@ -32,8 +32,6 @@ public class MainActivity extends BaseActivity {
         ll.addView(tv);
         setContentView(ll);
 
-        Log.d("====","dddddd");
-
     }
 
     @Override
